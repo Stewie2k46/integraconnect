@@ -5,7 +5,7 @@ pipeline {
         DOCKER_CREDENTIALS = credentials('jenkins-docker')
         GIT_CREDENTIALS = credentials('git-hub')
         KUBE_CONFIG = credentials('kubeconfig')
-        APP_NAME = 'integraconnect' // Make sure APP_NAME or relevant variable is defined
+        APP_NAME = 'integraconnect' // Application name
     }
 
     stages {
@@ -18,7 +18,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    docker.build("${DOCKER_CREDENTIALS_USR}/${APP_NAME}:1.0")
+                    docker.build("${DOCKER_CREDENTIALS_USR}/${APP_NAME}:${BUILD_NUMBER}")
                 }
             }
         }
@@ -27,7 +27,7 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry('https://index.docker.io/v1/', "${DOCKER_CREDENTIALS}") {
-                        docker.image("${DOCKER_CREDENTIALS_USR}/${APP_NAME}:1.0").push()
+                        docker.image("${DOCKER_CREDENTIALS_USR}/${APP_NAME}:${BUILD_NUMBER}").push()
                     }
                 }
             }
@@ -48,6 +48,9 @@ pipeline {
     post {
         failure {
             echo 'Deployment Failed!'
+        }
+        success {
+            echo 'Deployment Succeeded!'
         }
     }
 }
