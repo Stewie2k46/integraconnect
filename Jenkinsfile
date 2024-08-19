@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_CREDENTIALS = credentials('jenkins-docker')
+        DOCKER_CREDENTIALS = credentials('jenkins-docker')  // Ensure ID is correct
         GIT_CREDENTIALS = credentials('git-hub')
         KUBE_CONFIG = credentials('minikube-kubeconfig')
         APP_NAME = 'integraconnect'
