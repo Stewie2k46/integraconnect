@@ -2,10 +2,10 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_CREDENTIALS = credentials('jenkins-docker')
-        GIT_CREDENTIALS = credentials('git-hub')
-        KUBE_CONFIG = credentials('kubeconfig')
-        APP_NAME = 'integraconnect' // Application name
+        DOCKER_CREDENTIALS = credentials('jenkins-docker')  // Docker credentials
+        GIT_CREDENTIALS = credentials('git-hub')  // Updated to use 'git-hub'
+        KUBE_CONFIG = credentials('minikube-kubeconfig')  // Minikube kubeconfig credential
+        APP_NAME = 'integraconnect'  // Application name
     }
 
     stages {
@@ -36,7 +36,7 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 script {
-                    withKubeConfig([credentialsId: 'kubeconfig']) {
+                    withKubeConfig([credentialsId: 'minikube-kubeconfig']) {  // Ensure correct kubeconfig credential
                         sh 'kubectl apply -f deployment.yaml'
                         sh 'kubectl apply -f service.yaml'
                     }
