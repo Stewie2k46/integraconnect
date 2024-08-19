@@ -3,26 +3,22 @@ pipeline {
 
     environment {
         DOCKER_CREDENTIALS = credentials('jenkins-docker')
-        GITHUB_CREDENTIALS = credentials('git-hub')
+        GIT_CREDENTIALS = credentials('git-hub')
+        KUBE_CONFIG = credentials('kubeconfig')
+        APP_NAME = 'integraconnect' // Make sure APP_NAME or relevant variable is defined
     }
 
     stages {
-        stage('Clone repository') {
+        stage('Checkout') {
             steps {
-                git url: 'https://github.com/Stewie2k46/integraconnect.git', branch: 'main', credentialsId: 'git-hub'
-            }
-        }
-
-        stage('Install Dependencies') {
-            steps {
-                sh 'pip3 install -r requirements.txt'
+                git credentialsId: "${GIT_CREDENTIALS}", url: 'https://github.com/Stewie2k46/integraconnect.git'
             }
         }
 
         stage('Build Docker Image') {
             steps {
                 script {
-                    def app = docker.build("stewiedocker46/integraconnect:1.0", ".")
+                    docker.build("${DOCKER_CREDENTIALS_USR}/${APP_NAME}:1.0")
                 }
             }
         }
@@ -30,8 +26,8 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 script {
-                    docker.withRegistry('https://index.docker.io/v1/', 'jenkins-docker') {
-                        app.push("latest")
+                    docker.withRegistry('https://index.docker.io/v1/', "${DOCKER_CREDENTIALS}") {
+                        docker.image("${DOCKER_CREDENTIALS_USR}/${APP_NAME}:1.0").push()
                     }
                 }
             }
@@ -39,18 +35,17 @@ pipeline {
 
         stage('Deploy to Kubernetes') {
             steps {
-                sh '''
-                kubectl apply -f kubernetes/deployment.yaml
-                kubectl apply -f kubernetes/service.yaml
-                '''
+                script {
+                    withKubeConfig([credentialsId: 'kubeconfig']) {
+                        sh 'kubectl apply -f deployment.yaml'
+                        sh 'kubectl apply -f service.yaml'
+                    }
+                }
             }
         }
     }
 
     post {
-        success {
-            echo 'Deployment Successful!'
-        }
         failure {
             echo 'Deployment Failed!'
         }
