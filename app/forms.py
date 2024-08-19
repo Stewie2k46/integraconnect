@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, RadioField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from app.models import User
 
@@ -25,3 +25,10 @@ class LoginForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
     remember = BooleanField('Remember Me')
     submit = SubmitField('Login')
+
+class UserDetailsForm(FlaskForm):
+    height = StringField('Height (cm)', validators=[DataRequired(), Length(min=1, max=5)])
+    weight = StringField('Weight (kg)', validators=[DataRequired(), Length(min=1, max=5)])
+    age = StringField('Age', validators=[DataRequired(), Length(min=1, max=3)])
+    gender = RadioField('Gender', choices=[('M', 'Male'), ('F', 'Female')], validators=[DataRequired()])
+    submit = SubmitField('Submit')

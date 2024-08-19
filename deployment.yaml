@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: integraconnect-deployment
+  labels:
+    app: integraconnect
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: integraconnect
+  template:
+    metadata:
+      labels:
+        app: integraconnect
+    spec:
+      containers:
+      - name: integraconnect
+        image: stewiedocker46/batman:latest
+        ports:
+        - containerPort: 5000

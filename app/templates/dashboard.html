@@ -1,5 +1,48 @@
 {% extends "base.html" %}
+
 {% block title %}Dashboard{% endblock %}
+
 {% block content %}
-<h2>Welcome to the Healthcare Portal Dashboard!</h2>
+<h2>Enter Your Details</h2>
+<form method="POST" action="{{ url_for('dashboard') }}">
+    {{ form.hidden_tag() }}
+    <div>
+        <label for="height">Height (cm):</label>
+        {{ form.height(size=20) }}
+    </div>
+    <div>
+        <label for="weight">Weight (kg):</label>
+        {{ form.weight(size=20) }}
+    </div>
+    <div>
+        <label for="age">Age:</label>
+        {{ form.age(size=20) }}
+    </div>
+    <div>
+        <label for="gender">Gender:</label>
+        {{ form.gender }}
+    </div>
+    <div>
+        <input type="submit" value="Submit">
+    </div>
+</form>
+
+{% if user_data %}
+<h3>Your Details:</h3>
+<table>
+    <tr>
+        <th>Height (cm)</th>
+        <th>Weight (kg)</th>
+        <th>Age</th>
+        <th>Gender</th>
+    </tr>
+    <tr>
+        <td>{{ user_data['height'] }}</td>
+        <td>{{ user_data['weight'] }}</td>
+        <td>{{ user_data['age'] }}</td>
+        <td>{{ user_data['gender'] }}</td>
+    </tr>
+</table>
+{% endif %}
+
 {% endblock %}
