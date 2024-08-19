@@ -2,10 +2,10 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_CREDENTIALS = credentials('jenkins-docker')  // Docker Hub credentials
-        GIT_CREDENTIALS = credentials('git-hub')  // GitHub credentials
-        KUBE_CONFIG = credentials('minikube-kubeconfig')  // Kubeconfig for Minikube
-        APP_NAME = 'integraconnect'  // Application name
+        DOCKER_CREDENTIALS = credentials('jenkins-docker')
+        GIT_CREDENTIALS = credentials('git-hub')
+        KUBE_CONFIG = credentials('minikube-kubeconfig')
+        APP_NAME = 'integraconnect'
     }
 
     stages {
@@ -13,7 +13,7 @@ pipeline {
             steps {
                 git credentialsId: "${GIT_CREDENTIALS}", 
                     url: 'https://github.com/Stewie2k46/integraconnect.git', 
-                    branch: 'main'  // Explicitly specifying the 'main' branch
+                    branch: 'main'
             }
         }
 
