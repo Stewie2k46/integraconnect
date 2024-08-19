@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
       - name: integraconnect
-        image: stewiedocker46/batman:latest
+        image: stewiedocker46/integraconnect:latest  # Consistent image name
         ports:
         - containerPort: 5000
