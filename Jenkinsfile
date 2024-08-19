@@ -2,10 +2,11 @@ pipeline {
     agent any
 
     environment {
-        DOCKERHUB_TOKEN = credentials('dockerhub-token')  // Reference the Secret Text ID here
+        DOCKERHUB_TOKEN = credentials('docker-hub-token') // Use your secret text ID for Docker Hub PAT
         GIT_CREDENTIALS = credentials('git-hub')
         KUBE_CONFIG = credentials('minikube-kubeconfig')
         APP_NAME = 'integraconnect'
+        DOCKER_REPO = "stewiedocker46/${APP_NAME}" // Docker Hub repo will be created automatically
     }
 
     stages {
@@ -20,7 +21,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    def dockerImage = docker.build("${APP_NAME}:${BUILD_NUMBER}")
+                    docker.build("${DOCKER_REPO}:${BUILD_NUMBER}")
                 }
             }
         }
@@ -29,8 +30,7 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry('https://index.docker.io/v1/', "${DOCKERHUB_TOKEN}") {
-                        def dockerImage = docker.image("${APP_NAME}:${BUILD_NUMBER}")
-                        dockerImage.push()
+                        docker.image("${DOCKER_REPO}:${BUILD_NUMBER}").push()
                     }
                 }
             }
