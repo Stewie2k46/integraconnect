@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_CREDENTIALS = credentials('jenkins-docker')  // This ID should match your Jenkins credentials for Docker
+        DOCKER_CREDENTIALS = credentials('jenkins-docker') // Make sure this matches the ID of your Docker credentials
         GIT_CREDENTIALS = credentials('git-hub')
         KUBE_CONFIG = credentials('minikube-kubeconfig')
         APP_NAME = 'integraconnect'
@@ -20,7 +20,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    docker.build("${DOCKER_CREDENTIALS_USR}/${APP_NAME}:${BUILD_NUMBER}")
+                    dockerImage = docker.build("${DOCKER_CREDENTIALS_USR}/${APP_NAME}:${BUILD_NUMBER}")
                 }
             }
         }
@@ -28,8 +28,9 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 script {
+                    echo "Pushing Docker image to Docker Hub with credentials: ${DOCKER_CREDENTIALS_USR}"
                     docker.withRegistry('https://index.docker.io/v1/', "${DOCKER_CREDENTIALS}") {
-                        docker.image("${DOCKER_CREDENTIALS_USR}/${APP_NAME}:${BUILD_NUMBER}").push()
+                        dockerImage.push()
                     }
                 }
             }
@@ -38,7 +39,7 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 script {
-                    withKubeConfig([credentialsId: 'minikube-kubeconfig']) {
+                    withKubeConfig([credentialsId: "${KUBE_CONFIG}"]) {
                         sh 'kubectl apply -f deployment.yaml'
                         sh 'kubectl apply -f service.yaml'
                     }
