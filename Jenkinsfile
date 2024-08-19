@@ -5,7 +5,7 @@ pipeline {
         GIT_CREDENTIALS = credentials('git-hub')
         KUBE_CONFIG = credentials('minikube-kubeconfig')
         DOCKERHUB_USER = 'stewiedocker46'  // Hardcoded Docker Hub username
-        DOCKERHUB_TOKEN = 'your_dockerhub_token'  // Hardcoded Docker Hub token
+        DOCKERHUB_TOKEN = 'dckr_pat_f1nx9Qp1qNOOccC7-cqIVAA_UnQ'  // Hardcoded Docker Hub token
         APP_NAME = 'integraconnect'
     }
 
