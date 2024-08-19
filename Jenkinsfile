@@ -4,7 +4,8 @@ pipeline {
     environment {
         GIT_CREDENTIALS = credentials('git-hub')
         KUBE_CONFIG = credentials('minikube-kubeconfig')
-        DOCKERHUB_TOKEN = credentials('dockerhub-token') // Updated credentials ID
+        DOCKERHUB_USER = 'stewiedocker46'  // Hardcoded Docker Hub username
+        DOCKERHUB_TOKEN = 'your_dockerhub_token'  // Hardcoded Docker Hub token
         APP_NAME = 'integraconnect'
     }
 
@@ -28,7 +29,7 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 script {
-                    docker.withRegistry('https://index.docker.io/v1/', "${DOCKERHUB_TOKEN}") {
+                    docker.withRegistry('https://index.docker.io/v1/', "${DOCKERHUB_USER}:${DOCKERHUB_TOKEN}") {
                         docker.image("${APP_NAME}:${BUILD_NUMBER}").push()
                     }
                 }
