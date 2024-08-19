@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_CREDENTIALS = credentials('jenkins-docker')
+        DOCKERHUB_TOKEN = credentials('dockerhub-token')  // Reference the Secret Text ID here
         GIT_CREDENTIALS = credentials('git-hub')
         KUBE_CONFIG = credentials('minikube-kubeconfig')
         APP_NAME = 'integraconnect'
@@ -20,7 +20,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    def dockerImage = docker.build("${DOCKER_CREDENTIALS_USR}/${APP_NAME}:${BUILD_NUMBER}")
+                    def dockerImage = docker.build("${APP_NAME}:${BUILD_NUMBER}")
                 }
             }
         }
@@ -28,8 +28,8 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 script {
-                    docker.withRegistry('https://index.docker.io/v1/', "${DOCKER_CREDENTIALS}") {
-                        def dockerImage = docker.image("${DOCKER_CREDENTIALS_USR}/${APP_NAME}:${BUILD_NUMBER}")
+                    docker.withRegistry('https://index.docker.io/v1/', "${DOCKERHUB_TOKEN}") {
+                        def dockerImage = docker.image("${APP_NAME}:${BUILD_NUMBER}")
                         dockerImage.push()
                     }
                 }
